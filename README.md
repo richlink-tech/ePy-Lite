@@ -1,2 +1,4 @@
 # ePy-Lite
-ePy Lite (micropython)
+ePy Lite 
+
+https://github.com/WrightWuTW/ePy-Lite/wiki
