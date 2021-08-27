@@ -1,4 +1,4 @@
 # ePy-Lite
 ePy Lite 
 
-https://github.com/WrightWuTW/ePy-Lite/wiki
+https://github.com/richlink-tech/ePy-Lite/wiki/ePy-Lite-Home
