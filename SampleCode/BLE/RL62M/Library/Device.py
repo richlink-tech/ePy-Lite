@@ -1,6 +1,5 @@
 '''
 Create a BLE server (PERIPHERAL mode)
-
   BLE.RecvData() is recv data and check BLE system message for connect or disconnect
   recv data is 'A'  Lite will toggle the (Y)LED on lite board
   Alaway send the string "A" to CENTER (Mobile phone or Client)
@@ -29,7 +28,7 @@ while True: # send / recv data
     else :
         BLE.SendData('A')
         if m != None :
-            if m == 'A':
+            if 'A' in m:
               ledy.toggle()
             #print ('recv data is:' , m)
     delay(1000)
