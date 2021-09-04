@@ -6,6 +6,9 @@ Just for Windows OS .It don't need install any driver in Windows OS.
 * download the EPY-ISP.zip to Windows OS 
 * unzip the ISP tools .
 * exec the EPY-ISP.exe 
+* download firmware from the link 
+https://github.com/richlink-tech/ePy-Lite/tree/main/micropython_image
+
 > 1. short board isp-io pin and GND  
 > > * Lite -- P17 
 ![image](https://github.com/WrightWuTW/ePy-Lite/blob/main/Tools/Lite-ISP_pin.png)
