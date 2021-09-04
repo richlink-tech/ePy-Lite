@@ -1,3 +1,44 @@
 # RL62M Module Class Library
 
-## Class API support 
+## Class API 
+### Creat a BLE GATT module object
+- RL62M.GATT ( uart port , role = 'role mode')
+> uart port : baudrate = 115200/8-N-1
+> 
+> role have two mode :  
+>   - 'PERIPHERAL' : Server (Device) Mode ，Passive connection
+>   - 'CENTER' : Client (Master) Mode ，Active connection
+
+micropython example :
+```python
+uart = UART(1,115200,timeout=200,read_buf_len=512)
+BLE = RL62M.GATT(uart,role='PERIPHERAL')
+```
+### CENTER Mode Scanning and Connect to Device 
+- BLE.ScanConnect() : auto scanning the device and connect to first device by sorted RSSI (need 5 sec to scanning)
+- BLE.ScanConnect(mac='mac address') : Direct connect to the mac address device , mac address 70:02:00:00:08:B6 , use '7002000008B6'
+
+example 
+```
+BLE.ScanConnect() # scan and select the most near device (scan 5sec)
+BLE.ScanConnect(mac='7002000008B6')
+```
+### Send Data API
+- BLE.SendData(string) : send the string data 
+
+example 
+```
+BLE.SendData('ABC')
+BLE.SendData('ABC\r\n')
+BLE.SendData('my name is {}'.format('Wright') )
+```
+### Receive  Data API
+- msg = BLE.RecvData() : return the string data (UTF-8)
+
+example 
+```
+m=BLE.RecvData()
+```
+### Connect status
+- BLE.state : 'CONNECTED' / 'DISCONNECTED'
+The State will change use BLE.RecvData() API
