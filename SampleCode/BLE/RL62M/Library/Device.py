@@ -3,7 +3,7 @@ Create a BLE server (PERIPHERAL mode)
 
   BLE.RecvData() is recv data and check BLE system message for connect or disconnect
   recv data is 'A'  Lite will toggle the (Y)LED on lite board
-  Alaway send the string "ABC" to CENTER (Mobile phone or Client)
+  Alaway send the string "A" to CENTER (Mobile phone or Client)
 '''
 
 from machine import *
@@ -27,9 +27,9 @@ while True: # send / recv data
         #print('disconnected')
         break
     else :
-        BLE.SendData('ABC')
+        BLE.SendData('A')
         if m != None :
             if m == 'A':
               ledy.toggle()
             #print ('recv data is:' , m)
-    delay(100)
+    delay(1000)
