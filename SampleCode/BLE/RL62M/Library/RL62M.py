@@ -15,15 +15,17 @@ CENTER Mode --
     BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
 """
 from machine import delay
+
 class GATT:
+    
     def __init__(self, uart, role='PERIPHERAL'):
         self.ROLE = ''
-        self.MODE = ''
+        self.MODE = 'DATA'
         self.state = 'DISCONNECTED'
         self.ble = uart
-        self.msg_on() #enable system massage
         self.ChangeRole(role)
- 
+        self.msg_on() #enable system massage
+        
     def writeCMD_respons(self, atcmd,datamode =True):
         if self.MODE == 'DATA':
             self.ChangeMode('CMD')
@@ -39,13 +41,13 @@ class GATT:
             return
         elif mode == 'CMD':
             msg = ''
+            
             while not 'OK' in msg:
                 self.ble.write('!CCMD@')
                 delay(200)
                 self.ble.write('AT\r\n')
-                delay(50)
+                delay(200)
                 msg = self.ble.read(self.ble.any())
-                
             
             self.MODE = 'CMD'
         elif mode == 'DATA':
@@ -72,6 +74,12 @@ class GATT:
             return (None)
 
     def ChangeRole(self, role):
+        msg = self.writeCMD_respons('AT+ROLE=?')
+        if 'PERIPHERAL' in msg:
+            self.ROLE = 'PERIPHERAL'
+        elif 'CENTER' in msg:
+            self.ROLE = 'CENTER'
+            
         if role == self.ROLE:
             return
         else:
@@ -102,7 +110,6 @@ class GATT:
                     msg = str(self.ble.readline(),'utf-8')
                
             sorted(device,key =lambda x:x[3])
-            #print (device)
             
             msg = self.writeCMD_respons('AT+CONN={}'.format(device[0][0]),datamode = False)
         else :
@@ -114,5 +121,3 @@ class GATT:
                 break
             delay(100)
         return   
-            
-            
