@@ -3,16 +3,21 @@ RL62M is UART AT command module ,baudrate = 115200
 It can be set to PERIPHERAL(Server / Device ) mode.
 also , It can be set to Center mode( Client / Master ) mode
 How to use the Library
-from machine import *
-import RL62M 
-uart = UART(1,115200,timeout=200,read_buf_len=512)
-BLE = RL62M.GATT(uart,role='PERIPHERAL') or 'CENTER'
+    from machine import *
+    import RL62M 
+    uart = UART(1,115200,timeout=200,read_buf_len=512)
+    BLE = RL62M.GATT(uart,role='PERIPHERAL') or 'CENTER'
+
 PERIPHERAL/CENTER Mode -- 
     msg = BLE.RecvData() : recv data and check connect/disconnect status , msg is string type(UTF-8)
     BLE.SendData('ABC')
 CENTER Mode -- 
     BLE.ScanConnect() # scan and select the most near device (scan 5sec)
     BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
+    
+  # Author : Wright Wu  email:wright@aiplaynlearn.com
+  # Company : Rich-Link Tech. Cop. (Taiwan)
+    
 """
 from machine import delay
 
