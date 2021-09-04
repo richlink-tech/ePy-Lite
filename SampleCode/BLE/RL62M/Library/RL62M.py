@@ -2,21 +2,17 @@
 RL62M is UART AT command module ,baudrate = 115200
 It can be set to PERIPHERAL(Server / Device ) mode.
 also , It can be set to Center mode( Client / Master ) mode
-
 How to use the Library
-
 from machine import *
 import RL62M 
 uart = UART(1,115200,timeout=200,read_buf_len=512)
 BLE = RL62M.GATT(uart,role='PERIPHERAL') or 'CENTER'
-
 PERIPHERAL/CENTER Mode -- 
     msg = BLE.RecvData() : recv data and check connect/disconnect status , msg is string type(UTF-8)
     BLE.SendData('ABC')
 CENTER Mode -- 
     BLE.ScanConnect() # scan and select the most near device (scan 5sec)
     BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
-
 """
 from machine import delay
 class GATT:
@@ -64,6 +60,7 @@ class GATT:
 
     def RecvData(self):
         msg = self.ble.readline()
+        
         if len(msg)> 0:
             if 'SYS-MSG: CONNECTED OK' in msg:
                 self.state = 'CONNECTED'
@@ -90,35 +87,32 @@ class GATT:
             return (msg)
            
     def msg_on(self,en=1):
-        self.ChangeMode('CMD')
-        self.ble.write('AT+EN_SYSMSG={}\r\n'.format(en))
-        delay(50)
-        msg = self.ble.read(self.ble.any())
-        self.ChangeMode('DATA')
+        msg = self.writeCMD_respons('AT+EN_SYSMSG={}'.format(en))
         return (msg)
         
     def ScanConnect(self,mac=''):
         device =[]
         if mac =='':
-            self.writeCMD_respons('AT+SCAN',datamode = False)
-            delay(5000)
-            msg = str(self.ble.readline(),'utf-8')
-            
-            while 'SCAN_END_DEV_NUM' not in msg and 'EPY_' in msg:
-                device.append(msg.split(' '))
+            while len(device) == 0:
+                self.writeCMD_respons('AT+SCAN',datamode = False)
+                delay(5000)
                 msg = str(self.ble.readline(),'utf-8')
+                while 'SCAN_END_DEV_NUM' not in msg and 'EPY_' in msg:
+                    device.append(msg.split(' '))
+                    msg = str(self.ble.readline(),'utf-8')
                
             sorted(device,key =lambda x:x[3])
             #print (device)
-            msg = self.writeCMD_respons('AT+CONN={}'.format(device[0][0]))
+            
+            msg = self.writeCMD_respons('AT+CONN={}'.format(device[0][0]),datamode = False)
         else :
-            msg = self.writeCMD_respons('AT+CONN={}'.format(mac))
+            msg = self.writeCMD_respons('AT+CONN={}'.format(mac),datamode = False)
         for i in range(20):
             msg = self.RecvData()
             if self.state == 'CONNECTED':
+                self.ChangeMode('DATA')
                 break
             delay(100)
-        return (self.state)   
+        return   
             
             
-    
