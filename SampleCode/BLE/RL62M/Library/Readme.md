@@ -1,4 +1,9 @@
 # RL62M Module Class Library
+RL62M01 is a BLE V5.0 AT CMD Module ，It be builded in ePy Lite (Micropython Board). It is very easy use in small MCU application
+
+You can download the datasheet and AT command programming guide from the website
+
+https://www.richlink-tech.com/%E8%B3%87%E6%96%99%E4%B8%8B%E8%BC%89 
 
 ## Class API 
 ### Creat a BLE GATT module object
@@ -19,7 +24,7 @@ BLE = RL62M.GATT(uart,role='PERIPHERAL')
 - BLE.ScanConnect(mac='mac address') : Direct connect to the mac address device , mac address 70:02:00:00:08:B6 , use '7002000008B6'
 
 example 
-```
+```python
 BLE.ScanConnect() # scan and select the most near device (scan 5sec)
 BLE.ScanConnect(mac='7002000008B6')
 ```
@@ -27,7 +32,7 @@ BLE.ScanConnect(mac='7002000008B6')
 - BLE.SendData(string) : send the string data 
 
 example 
-```
+```python
 BLE.SendData('ABC')
 BLE.SendData('ABC\r\n')
 BLE.SendData('my name is {}'.format('Wright') )
@@ -36,7 +41,7 @@ BLE.SendData('my name is {}'.format('Wright') )
 - msg = BLE.RecvData() : return the string data (UTF-8)
 
 example 
-```
+```python
 m=BLE.RecvData()
 ```
 ### Connect status
