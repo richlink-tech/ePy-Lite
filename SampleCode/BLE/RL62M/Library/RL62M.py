@@ -29,7 +29,7 @@ class GATT:
         self.state = 'DISCONNECTED'
         self.ble = uart
         self.ChangeRole(role)
-        self.msg_on() #enable system massage
+        self.msg_on() #enable system message
         
     def writeCMD_respons(self, atcmd,datamode =True):
         if self.MODE == 'DATA':
