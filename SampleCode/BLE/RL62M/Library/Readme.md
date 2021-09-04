@@ -8,11 +8,17 @@ https://www.richlink-tech.com/%E8%B3%87%E6%96%99%E4%B8%8B%E8%BC%89
 
 ## How to use the sample code 
 > A1. Use keyA on ePy-Lite Board into USB Mass-Storage 
+> 
 > A2. copy the Device.py to EASYPY disk ,and rename to main.py
-> Other ePy-Lite Board
+> 
+> - **Other ePy-Lite Board**
+> 
 > B1. Use keyA on other ePy-Lite Board into USB Mass-Storage 
+> 
 > B2. copy the Master.py to EASYPY disk ,and rename to main.py
+> 
 > 3. reset two ePy-Lite system
+> 
 > 4. about 6-8 sec , you will see the BLE Blue LED on , and Y LED Toggle (1sec) 
 
 ## Class API 
