@@ -16,6 +16,8 @@
 
 from micropython import const
 from machine import SPI, Pin
+# Lite FW version > V1.8 enable the SWSPI module disable SPI Module
+#from machine import SWSPI, Pin
 from machine import Switch   #Get button KEY library
 import utime
 import mfrc522
