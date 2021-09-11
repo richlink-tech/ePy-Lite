@@ -13,7 +13,7 @@ ledy = LED('ledy')
 ''' Center mode  sample '''
 BLE = RL62M.GATT(uart,role='CENTER')
 # two connect mode ,select one connect to device 
-BLE.ScanConnect(name='EPY_') # scan and select the most near device (scan 5sec)
+BLE.ScanConnect(name_header='EPY_') # scan and select the most near device (scan 5sec)
 # BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
  
 while True: # send / recv data
