@@ -12,12 +12,15 @@ PERIPHERAL/CENTER Mode --
     msg = BLE.RecvData() : recv data and check connect/disconnect status , msg is string type(UTF-8)
     BLE.SendData('ABC')
 CENTER Mode -- 
-    BLE.ScanConnect() # scan and select the most near device (scan 5sec)
+    BLE.ScanConnect(name_header = 'EPY_ ') # scan and select the most near device (scan 5sec)
     BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
     
   # Author : Wright Wu  email:wright@aiplaynlearn.com
   # Company : Rich-Link Tech. Cop. (Taiwan)
     
+V1.000 = first release version    
+V1.001 
+    - fixed mac connect change data mode
 """
 from machine import delay
 
@@ -25,11 +28,12 @@ class GATT:
     
     def __init__(self, uart, role='PERIPHERAL'):
         self.ROLE = ''
-        self.MODE = 'DATA'
+        self.MODE = ''
         self.state = 'DISCONNECTED'
         self.ble = uart
-        self.ChangeRole(role)
+        self.ChangeMode('CMD')
         self.msg_on() #enable system message
+        self.ChangeRole(role)
         
     def writeCMD_respons(self, atcmd,datamode =True):
         if self.MODE == 'DATA':
@@ -37,28 +41,42 @@ class GATT:
         self.ble.write(atcmd+'\r\n')
         delay(50)
         msg = self.ble.read(self.ble.any())
+        if 'SYS-MSG: CONNECTED OK' in msg:
+            self.state = 'CONNECTED'
+        elif 'SYS-MSG: DISCONNECTED OK' in msg:
+            self.state = 'DISCONNECTED' 
         if datamode == True:
             self.ChangeMode('DATA')
         return(msg)
 
     def ChangeMode(self, mode):
-        if mode == self.MODE:
-            return
-        elif mode == 'CMD':
+        if self.MODE ==  '' :
             msg = ''
-            
-            while not 'OK' in msg:
+            while "OK" in msg:
                 self.ble.write('!CCMD@')
                 delay(200)
                 self.ble.write('AT\r\n')
-                delay(200)
+                delay(50)
                 msg = self.ble.read(self.ble.any())
-            
+            self.MODE = 'CMD'
+        if mode == self.MODE:
+            return
+        elif mode == 'CMD':
+            delay(150)
+            self.ble.write('!CCMD@')
+            delay(150)
+            msg = self.ble.readline()
+            while not 'SYS-MSG: CMD_MODE OK' in msg:
+                msg = self.ble.readline()
+                delay(50)
             self.MODE = 'CMD'
         elif mode == 'DATA':
             self.ble.write('AT+MODE_DATA\r\n')
             delay(200)
-            msg = self.ble.read(self.ble.any())
+            msg = self.ble.readline()
+            while not 'SYS-MSG: DATA_MODE OK' in msg:
+                msg = self.ble.readline()
+                delay(50)
             self.MODE = 'DATA'
  
     def SendData(self, data):
@@ -67,7 +85,7 @@ class GATT:
 
     def RecvData(self):
         msg = self.ble.readline()
-        
+
         if len(msg)> 0:
             if 'SYS-MSG: CONNECTED OK' in msg:
                 self.state = 'CONNECTED'
@@ -94,7 +112,7 @@ class GATT:
             else : 
                 self.ble.write('AT+ROLE=C\r\n')
             delay(500)
-            msg = self.ble.read(self.ble.any())
+            msg = self.ble.readline()
             self.ROLE = role
             self.ChangeMode('DATA')
             return (msg)
@@ -103,26 +121,35 @@ class GATT:
         msg = self.writeCMD_respons('AT+EN_SYSMSG={}'.format(en))
         return (msg)
         
-    def ScanConnect(self,mac=''):
+    def ScanConnect(self,mac='',name_header ='EPY_'):
         device =[]
         if mac =='':
             while len(device) == 0:
                 self.writeCMD_respons('AT+SCAN',datamode = False)
                 delay(5000)
                 msg = str(self.ble.readline(),'utf-8')
-                while 'SCAN_END_DEV_NUM' not in msg and 'EPY_' in msg:
+                while 'SCAN_END_DEV_NUM' not in msg and name_header in msg:
                     device.append(msg.split(' '))
                     msg = str(self.ble.readline(),'utf-8')
                
-            sorted(device,key =lambda x:x[3])
-            
-            msg = self.writeCMD_respons('AT+CONN={}'.format(device[0][0]),datamode = False)
+            sorted(device,key =lambda x:x[3]) 
+ 
+            msg = self.writeCMD_respons('AT+CONN={}'.format(device[0][0]),datamode = True)
         else :
-            msg = self.writeCMD_respons('AT+CONN={}'.format(mac),datamode = False)
-        for i in range(20):
+            msg = self.writeCMD_respons('AT+CONN={}'.format(mac),datamode = True)
+            
+        for i in range(10):
             msg = self.RecvData()
             if self.state == 'CONNECTED':
-                self.ChangeMode('DATA')
                 break
-            delay(100)
+            delay(200)
         return   
+        
+    def disconnect(self):
+        msg = self.writeCMD_respons('AT+DISC',datamode = True)
+        for i in range(10):
+            msg = self.RecvData()
+            if self.state == 'DISCONNECTED':
+                break
+            delay(200)
+        return
