@@ -36,7 +36,7 @@ uart = UART(1,115200,timeout=200,read_buf_len=512)
 BLE = RL62M.GATT(uart,role='PERIPHERAL')
 ```
 ### CENTER Mode Scanning and Connect to Device 
-- BLE.ScanConnect() : auto scanning the device and connect to first device by sorted RSSI (need 5 sec to scanning)
+- BLE.ScanConnect(name_header = 'EPY_ ') : auto scanning the device and connect to first device by sorted RSSI (need 5 sec to scanning)
 - BLE.ScanConnect(mac='mac address') : Direct connect to the mac address device , mac address 70:02:00:00:08:B6 , use '7002000008B6'
 
 example 
@@ -63,3 +63,6 @@ m=BLE.RecvData()
 ### Connect status
 - BLE.state : 'CONNECTED' / 'DISCONNECTED'
 The State will change use BLE.RecvData() API
+
+### Disconnect
+- BLE.disconnect()
