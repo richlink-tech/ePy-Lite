@@ -16,7 +16,7 @@ def LightColor(C,W,R,G,B):
     Light_CMD[12] = B
     BLE.SendData(bytearray(Light_CMD))
     delay(100)
- def key_func():
+def key_func():
     global KeyTimes
     KeyTimes =KeyTimes+1
     if KeyTimes >=6 :
