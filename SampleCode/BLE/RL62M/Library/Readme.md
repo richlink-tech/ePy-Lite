@@ -28,14 +28,14 @@ https://www.richlink-tech.com/%E8%B3%87%E6%96%99%E4%B8%8B%E8%BC%89
 > 
 > role have two mode :  
 >   - 'PERIPHERAL' : Server (Device) Mode ，Passive connection
->   - 'CENTER' : Client (Master) Mode ，Active connection
+>   - 'CENTRAL' : Client (Master) Mode ，Active connection
 
 micropython example :
 ```python
 uart = UART(1,115200,timeout=200,read_buf_len=512)
 BLE = RL62M.GATT(uart,role='PERIPHERAL')
 ```
-### CENTER Mode Scanning and Connect to Device 
+### CENTRAL Mode Scanning and Connect to Device 
 - BLE.ScanConnect(name_header = 'EPY_ ') : auto scanning the device and connect to first device by sorted RSSI (need 5 sec to scanning)
 - BLE.ScanConnect(mac='mac address') : Direct connect to the mac address device , mac address 70:02:00:00:08:B6 , use '7002000008B6'
 
