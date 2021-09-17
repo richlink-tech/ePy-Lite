@@ -2,7 +2,7 @@
 Create a BLE server (PERIPHERAL mode)
   BLE.RecvData() is recv data and check BLE system message for connect or disconnect
   recv data is 'A'  Lite will toggle the (Y)LED on lite board
-  Alaway send the string "A" to CENTER (Mobile phone or Client)
+  Alaway send the string "A" to CENTRAL (Mobile phone or Client)
 '''
 
 from machine import *
