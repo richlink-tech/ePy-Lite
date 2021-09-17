@@ -23,7 +23,7 @@ def key_func():
         KeyTimes = 0
 KeyTimes = 0
 key.callback(key_func)
-BLE = RL62M.GATT(uart1,role='CENTER') 
+BLE = RL62M.GATT(uart1,role='CENTRAL') 
 BLE.ScanConnect(mac=Light_MAC_Address)
 while True:
     if KeyTimes == 0:
