@@ -6,12 +6,12 @@ How to use the Library
 from machine import *
 import RL62M 
 uart = UART(1,115200,timeout=200,read_buf_len=512)
-BLE = RL62M.GATT(uart,role='PERIPHERAL') or 'CENTER'
-PERIPHERAL/CENTER Mode -- 
+BLE = RL62M.GATT(uart,role='PERIPHERAL') or 'CENTRAL'
+PERIPHERAL/CENTRAL Mode -- 
     msg = BLE.RecvData() : recv data and check connect/disconnect status , msg is string type(UTF-8)
     BLE.SendData('ABC')
-CENTER Mode -- 
-    BLE.ScanConnect(name_header='EPY_') # scan and select the name have 'EPY_' header and most near device (scan 5sec)
+CENTRAL Mode -- 
+    BLE.ScanConnect() # scan and select the most near device (scan 5sec)
     BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
 V1.000 = first release version    
 V1.001 
@@ -81,6 +81,8 @@ class GATT:
                 
                 delay(50)
             self.MODE = 'DATA'
+        else :
+            pass
  
     def SendData(self, data):
         self.ble.write(data)
@@ -102,14 +104,18 @@ class GATT:
 
     def ChangeRole(self, role):
         msg = self.writeCMD_respons('AT+ROLE=?')
+       
         if 'PERIPHERAL' in msg:
             self.ROLE = 'PERIPHERAL'
-        elif 'CENTER' in msg:
-            self.ROLE = 'CENTER'
+        elif 'CENTRAL' in msg:
+            self.ROLE = 'CENTRAL'
+        else :
+            pass
             
         if role == self.ROLE:
             return
         else:
+            
             self.ChangeMode('CMD')
             if role == 'PERIPHERAL':
                 self.ble.write('AT+ROLE=P\r\n')
@@ -117,13 +123,16 @@ class GATT:
                 self.ble.write('AT+ROLE=C\r\n')
             delay(500)
             msg = self.ble.readline()
+            
             while 'READY OK' not in msg:
                 msg = self.ble.readline()
+                
             msg = self.ble.readline()
+            
             
             self.ROLE = role
             self.ChangeMode('DATA')
-            return (msg)
+            return
            
     def msg_on(self,en=1):
         msg = self.writeCMD_respons('AT+EN_SYSMSG={}'.format(en))
@@ -161,6 +170,3 @@ class GATT:
                 break
             delay(200)
         return
-      
-            
-            
