@@ -11,7 +11,7 @@ PERIPHERAL/CENTER Mode --
     msg = BLE.RecvData() : recv data and check connect/disconnect status , msg is string type(UTF-8)
     BLE.SendData('ABC')
 CENTER Mode -- 
-    BLE.ScanConnect() # scan and select the most near device (scan 5sec)
+    BLE.ScanConnect(name_header='EPY_') # scan and select the name have 'EPY_' header and most near device (scan 5sec)
     BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
 V1.000 = first release version    
 V1.001 
