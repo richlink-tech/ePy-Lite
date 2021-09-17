@@ -3,24 +3,23 @@ RL62M is UART AT command module ,baudrate = 115200
 It can be set to PERIPHERAL(Server / Device ) mode.
 also , It can be set to Center mode( Client / Master ) mode
 How to use the Library
-    from machine import *
-    import RL62M 
-    uart = UART(1,115200,timeout=200,read_buf_len=512)
-    BLE = RL62M.GATT(uart,role='PERIPHERAL') or 'CENTER'
-
+from machine import *
+import RL62M 
+uart = UART(1,115200,timeout=200,read_buf_len=512)
+BLE = RL62M.GATT(uart,role='PERIPHERAL') or 'CENTER'
 PERIPHERAL/CENTER Mode -- 
     msg = BLE.RecvData() : recv data and check connect/disconnect status , msg is string type(UTF-8)
     BLE.SendData('ABC')
 CENTER Mode -- 
-    BLE.ScanConnect(name_header = 'EPY_ ') # scan and select the most near device (scan 5sec)
+    BLE.ScanConnect() # scan and select the most near device (scan 5sec)
     BLE.ScanConnect(mac='7002000008B6') # don't need scan , use device mac address connect
-    
-  # Author : Wright Wu  email:wright@aiplaynlearn.com
-  # Company : Rich-Link Tech. Cop. (Taiwan)
-    
 V1.000 = first release version    
 V1.001 
     - fixed mac connect change data mode
+V1.002 
+    - fixed data receve return issues
+    - fixed change ROLE check message error
+
 """
 from machine import delay
 
@@ -66,16 +65,20 @@ class GATT:
             self.ble.write('!CCMD@')
             delay(150)
             msg = self.ble.readline()
+            
             while not 'SYS-MSG: CMD_MODE OK' in msg:
                 msg = self.ble.readline()
+                
                 delay(50)
             self.MODE = 'CMD'
         elif mode == 'DATA':
             self.ble.write('AT+MODE_DATA\r\n')
             delay(200)
             msg = self.ble.readline()
+            
             while not 'SYS-MSG: DATA_MODE OK' in msg:
                 msg = self.ble.readline()
+                
                 delay(50)
             self.MODE = 'DATA'
  
@@ -89,12 +92,13 @@ class GATT:
         if len(msg)> 0:
             if 'SYS-MSG: CONNECTED OK' in msg:
                 self.state = 'CONNECTED'
+                msg =''
             elif 'SYS-MSG: DISCONNECTED OK' in msg:
                 self.state = 'DISCONNECTED'
+                msg =''
             else :
                 return (str(msg,'utf-8'))
-        else:
-            return (None)
+        return (str(msg,'utf-8'))
 
     def ChangeRole(self, role):
         msg = self.writeCMD_respons('AT+ROLE=?')
@@ -113,6 +117,10 @@ class GATT:
                 self.ble.write('AT+ROLE=C\r\n')
             delay(500)
             msg = self.ble.readline()
+            while 'READY OK' not in msg:
+                msg = self.ble.readline()
+            msg = self.ble.readline()
+            
             self.ROLE = role
             self.ChangeMode('DATA')
             return (msg)
@@ -133,7 +141,7 @@ class GATT:
                     msg = str(self.ble.readline(),'utf-8')
                
             sorted(device,key =lambda x:x[3]) 
- 
+           
             msg = self.writeCMD_respons('AT+CONN={}'.format(device[0][0]),datamode = True)
         else :
             msg = self.writeCMD_respons('AT+CONN={}'.format(mac),datamode = True)
@@ -153,3 +161,6 @@ class GATT:
                 break
             delay(200)
         return
+      
+            
+            
