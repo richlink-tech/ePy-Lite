@@ -41,7 +41,7 @@ BLE = RL62M.GATT(uart,role='PERIPHERAL')
 
 example 
 ```python
-BLE.ScanConnect() # scan and select the most near device (scan 5sec)
+BLE.ScanConnect(name_header = 'EPY_ ') # scan and select the BLE name have 'EPY_' header and most near device (scan 5sec)
 BLE.ScanConnect(mac='7002000008B6')
 ```
 ### Send Data API
