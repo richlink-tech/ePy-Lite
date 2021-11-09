@@ -13,7 +13,7 @@ oled.fill(0) #清除畫布
 oled.pixel(64,32,1) # 圓心 (64,32)一點
 
 ''' 使用三角函數劃出一個圓'''
-for i range(361):
+for i in range(361):
   x = 30 * math.cos(i / 180.0 * math.pi)
   y = 30 * math.sin(i / 180.0 * math.pi)
   oled.pixel(int(64-x),int(32-y),1)
